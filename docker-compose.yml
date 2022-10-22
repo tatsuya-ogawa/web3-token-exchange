@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  node1:
+    image: ethereum/client-go
+    ports:
+      - 8545:8545
+    volumes:
+      - ./geth/genesis.json:/genesis.json
+    entrypoint:
+      - sh
+      - -c
+      - 'geth init --datadir /opt/geth-dev /genesis.json && geth --networkid 12345 --nodiscover --dev --http.addr "0.0.0.0" --http --http.port 8545 --http.api admin,web3,eth,personal,miner,txpool,db --datadir /opt/geth-dev'
+volumes:
+  node1:
+  hardhat-node-1:
