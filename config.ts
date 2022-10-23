@@ -1,22 +1,47 @@
-interface Account{
-    privateKey:string
+interface Account {
+    privateKey: string
 }
-interface Accounts{
-    conbase:Account
-    deployer:Account
+interface Accounts {
+    conbase: Account
+    deployer: Account
 }
-interface CustomChain{
-   name:string,chainId:number,networkId:number
+interface CustomChain {
+    name: string, chainId: number, networkId: number
 }
-const accounts:Accounts = {
-    conbase: {
-        privateKey: "26e2e186e201a30f6f03fe03f23f4ced8f8054911478343e72bf52a35c2ff121"
+export interface Node {
+    name:string
+    accounts: Accounts
+    customChain: CustomChain
+    endpoint: string
+}
+
+export const Node1: Node = {
+    name:"node1",
+    accounts: {
+        conbase: {
+            privateKey: "26e2e186e201a30f6f03fe03f23f4ced8f8054911478343e72bf52a35c2ff121"
+        },
+        deployer: {
+            privateKey: "b4047842543402604305d3b06a2e2cf7345d9e73945f973cbae7dafb1b8f4f94"
+        }
     },
-    deployer: {
-        privateKey: "b4047842543402604305d3b06a2e2cf7345d9e73945f973cbae7dafb1b8f4f94"
-    }
-}
-const customChain:CustomChain = {
-    name: 'custom-network', chainId: 12345, networkId: 12345
-}
-export default {accounts,customChain};
+    customChain: {
+        name: "custom-network1", chainId: 12345, networkId: 12345
+    },
+    endpoint: "http://localhost:8545"
+};
+export const Node2: Node = {
+    name:"node2",
+    accounts: {
+        conbase: {
+            privateKey: "20b80cf94c52ab670f4c9e35b20c4358c455f96979d66a0bf5992f9129c2d6ba"
+        },
+        deployer: {
+            privateKey: "b0e09cde6b921754e49547ac40d9c1da4d79a496a2e0c308aaceb5143bf49a9a"
+        }
+    },
+    customChain: {
+        name: "custom-network1", chainId: 54321, networkId: 54321
+    },
+    endpoint: "http://localhost:18545"
+};

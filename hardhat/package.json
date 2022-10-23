@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "main":"hardhat run scripts/deploy.ts --network localmain"
+    "deploy": "hardhat run scripts/deploy.ts --network localmain",
+    "build": "hardhat compile"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
@@ -27,5 +28,6 @@
     "ts-node": ">=8.0.0",
     "typechain": "^8.1.0",
     "typescript": ">=4.5.0"
-  }
+  },
+  "dependencies": {}
 }
