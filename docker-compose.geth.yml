@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  node1:
+    image: ethereum/client-go
+    ports:
+      - 8545:8545
+    volumes:
+      - ./geth/genesis1.json:/genesis.json
+      - ./geth/entrypoint.sh:/entrypoint.sh
+    environment:
+      - NETWORK_ID=12345
+      - PORT=8545
+      - DATA_DIR=/opt/geth
+    entrypoint:
+      - sh
+      - -c
+      - /entrypoint.sh  
+  node2:
+    image: ethereum/client-go
+    ports:
+      - 18545:8545
+    volumes:
+      - ./geth/genesis2.json:/genesis.json
+      - ./geth/entrypoint.sh:/entrypoint.sh
+    environment:
+      - NETWORK_ID=54321
+      - PORT=8545
+      - DATA_DIR=/opt/geth
+    entrypoint:
+      - sh
+      - -c
+      - /entrypoint.sh
