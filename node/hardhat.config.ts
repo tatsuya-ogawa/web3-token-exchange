@@ -6,11 +6,11 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       accounts: [{
-        privateKey: node.accounts.conbase.privateKey,//"26e2e186e201a30f6f03fe03f23f4ced8f8054911478343e72bf52a35c2ff121",
+        privateKey: node.accounts.conbase.privateKey,
         balance: "500000000000000000000"
       }],
-      coinbase: node.accounts.conbase.address,//"0xf88bee0ac4fc75c7059c83358711e86d5c652317",
-      chainId: node.customChain.chainId,//12345
+      coinbase: node.accounts.conbase.address,
+      chainId: node.customChain.chainId,
       mining: {
         auto: true,
         // interval: [1000, 2000]
