@@ -1,35 +1,57 @@
 version: '3.8'
 services:
   node1:
-    image: ethereum/client-go
+    working_dir: /opt/hardhat/node
+    volumes:
+      - ./node/hardhat.config.ts:/opt/hardhat/node/hardhat.config.ts
+      - ./config.ts:/opt/hardhat/config.ts
+    build: 
+      context: node
+    environment:
+      - NODE=Node1
     ports:
       - 8545:8545
-    volumes:
-      - ./geth/genesis1.json:/genesis.json
-      - ./geth/entrypoint.sh:/entrypoint.sh
-    environment:
-      - NETWORK_ID=12345
-      - PORT=8545
-      - DATA_DIR=/opt/geth
-    entrypoint:
-      - sh
-      - -c
-      - /entrypoint.sh  
   node2:
-    image: ethereum/client-go
+    working_dir: /opt/hardhat/node
+    volumes:
+      - ./node/hardhat.config.ts:/opt/hardhat/node/hardhat.config.ts
+      - ./config.ts:/opt/hardhat/config.ts
+    build: 
+      context: node
+    environment:
+      - NODE=Node2    
     ports:
       - 18545:8545
-    volumes:
-      - ./geth/genesis2.json:/genesis.json
-      - ./geth/entrypoint.sh:/entrypoint.sh
-    environment:
-      - NETWORK_ID=54321
-      - PORT=8545
-      - DATA_DIR=/opt/geth
-    entrypoint:
-      - sh
-      - -c
-      - /entrypoint.sh
+  # node1:
+  #   image: ethereum/client-go
+  #   ports:
+  #     - 8545:8545
+  #   volumes:
+  #     - ./geth/genesis1.json:/genesis.json
+  #     - ./geth/entrypoint.sh:/entrypoint.sh
+  #   environment:
+  #     - NETWORK_ID=12345
+  #     - PORT=8545
+  #     - DATA_DIR=/opt/geth
+  #   entrypoint:
+  #     - sh
+  #     - -c
+  #     - /entrypoint.sh  
+  # node2:
+  #   image: ethereum/client-go
+  #   ports:
+  #     - 18545:8545
+  #   volumes:
+  #     - ./geth/genesis2.json:/genesis.json
+  #     - ./geth/entrypoint.sh:/entrypoint.sh
+  #   environment:
+  #     - NETWORK_ID=54321
+  #     - PORT=8545
+  #     - DATA_DIR=/opt/geth
+  #   entrypoint:
+  #     - sh
+  #     - -c
+  #     - /entrypoint.sh
 volumes:
   node1:
   hardhat-node-1:

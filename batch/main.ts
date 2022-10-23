@@ -67,7 +67,7 @@ class NodeManager {
         const fromWallet = getWallet(appConfig.accounts.conbase.privateKey);
         const toWallet = getWallet(appConfig.accounts.deployer.privateKey);
         const count = await web3.eth.getTransactionCount(fromWallet.getAddressString());
-        const countHex = `0x${count}`;
+        const countHex = `0x${count.toString(16)}`;
         const gasLimit = 100000;
         const txParams = {
             nonce: countHex,
@@ -100,8 +100,12 @@ class NodeManager {
         const web3 = this.web3;
         const appConfig = this.appConfig;
         const coinbaseAccount = web3.eth.accounts.privateKeyToAccount("0x" + appConfig.accounts.conbase.privateKey);
-        await this.miner.setEtherbase(coinbaseAccount.address);
-        this.log(`coinbase address is ${await web3.eth.getCoinbase()}`)
+        let currentCoinbaseAddress = await web3.eth.getCoinbase();
+        if(currentCoinbaseAddress != coinbaseAccount.address.toLowerCase()){
+            await this.miner.setEtherbase(coinbaseAccount.address);
+            currentCoinbaseAddress = await web3.eth.getCoinbase();
+        }
+        this.log(`coinbase address is ${currentCoinbaseAddress}`)
         const deployerAccount = web3.eth.accounts.privateKeyToAccount("0x" + appConfig.accounts.deployer.privateKey);
         this.log(`deployer address is ${deployerAccount.address}`)
 
@@ -112,7 +116,7 @@ class NodeManager {
         await this.loop();
     }
 }
-// const node1 = new NodeManager(Node1);
-// node1.start();
+const node1 = new NodeManager(Node1);
+node1.start();
 const node2 = new NodeManager(Node2);
 node2.start();
