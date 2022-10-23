@@ -45,8 +45,10 @@ contract ExchangeableToken is MyERC20 {
         payable
         returns (bool success)
     {
+        uint256 cost = estimateNativeCoin(amount);
         _burn(msg.sender, amount);
         emit ExchangeTransfer(msg.sender, to, amount);
+        payable(msg.sender).transfer(msg.value - cost);
         return true;
     }
 

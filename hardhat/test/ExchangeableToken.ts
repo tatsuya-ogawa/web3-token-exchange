@@ -1,9 +1,8 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ExchangeableToken } from "../typechain-types";
-import { MyERC20Token } from "../typechain-types/MyERC20Token";
+import { expect } from "chai";
+import { ethers } from "hardhat";
 
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
 describe("ERC20-BEP20 token", function () {
   let [accountA, accountB, accountC]:SignerWithAddress[] = [];
   let token:ExchangeableToken;
