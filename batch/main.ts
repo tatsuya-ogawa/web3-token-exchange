@@ -53,7 +53,7 @@ class NodeManager {
     async createTransaction() {
         const web3 = this.web3;
         const appConfig = this.appConfig;
-        const coinbaseAccount = web3.eth.accounts.privateKeyToAccount("0x" + appConfig.accounts.conbase.privateKey);
+        const coinbaseAccount = web3.eth.accounts.privateKeyToAccount("0x" + appConfig.accounts.coinbase.privateKey);
         const deployerAccount = web3.eth.accounts.privateKeyToAccount("0x" + appConfig.accounts.deployer.privateKey);
         const coinbaseBalance = Number.parseInt(await web3.eth.getBalance(coinbaseAccount.address));
         const deployerBalance = Number.parseInt(await web3.eth.getBalance(deployerAccount.address));
@@ -64,7 +64,7 @@ class NodeManager {
         const sendBalance = 1000000000000000000;
         if (coinbaseBalance == 1000000000000000000) return;
 
-        const fromWallet = getWallet(appConfig.accounts.conbase.privateKey);
+        const fromWallet = getWallet(appConfig.accounts.coinbase.privateKey);
         const toWallet = getWallet(appConfig.accounts.deployer.privateKey);
         const count = await web3.eth.getTransactionCount(fromWallet.getAddressString());
         const countHex = `0x${count.toString(16)}`;
@@ -99,7 +99,7 @@ class NodeManager {
     async start() {
         const web3 = this.web3;
         const appConfig = this.appConfig;
-        const coinbaseAccount = web3.eth.accounts.privateKeyToAccount("0x" + appConfig.accounts.conbase.privateKey);
+        const coinbaseAccount = web3.eth.accounts.privateKeyToAccount("0x" + appConfig.accounts.coinbase.privateKey);
         let currentCoinbaseAddress = await web3.eth.getCoinbase();
         if(currentCoinbaseAddress != coinbaseAccount.address.toLowerCase()){
             await this.miner.setEtherbase(coinbaseAccount.address);

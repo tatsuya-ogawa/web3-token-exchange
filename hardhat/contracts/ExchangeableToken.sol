@@ -4,7 +4,7 @@ import "./MyERC20.sol";
 
 contract ExchangeableToken is MyERC20 {
     uint256 private _rate;
-    uint256 private constant _base = 1000000000000000000;
+    uint256 private constant _base = 1;
 
     constructor() MyERC20() {
         _rate = _base;
@@ -28,11 +28,15 @@ contract ExchangeableToken is MyERC20 {
         uint256 _value
     );
 
-    function mint(uint256 amount) public payable returns (bool success) {
+    function mint(uint256 amount) public payable returns (bool success) {        
         require(amount > 0,"The amount must be greater than 0");
         uint256 num_of_tokens = estimateNumOfToken(amount);
+        uint256 cost = estimateNativeCoin(num_of_tokens);
         require(num_of_tokens > 0,"Number of tokens must be greater than 0");        
-        _mint(msg.sender, amount);
+        _mint(msg.sender, num_of_tokens);
+        if(msg.value - cost > 0){
+            payable(msg.sender).transfer(msg.value - cost);
+        }
         return true;
     }
 
@@ -42,13 +46,10 @@ contract ExchangeableToken is MyERC20 {
 
     function exchange(address to, uint256 amount)
         public
-        payable
         returns (bool success)
     {
-        uint256 cost = estimateNativeCoin(amount);
         _burn(msg.sender, amount);
         emit ExchangeTransfer(msg.sender, to, amount);
-        payable(msg.sender).transfer(msg.value - cost);
         return true;
     }
 
