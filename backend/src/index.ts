@@ -73,7 +73,7 @@ app.get('/networks', async (req: express.Request, res: express.Response) => {
                 symbol: `EX${index+1}`,
                 decimals: 18 //In number form
             },
-            rpcUrls: [node.endpoint],
+            rpcUrls: [node.frontEndpoint],
             // blockExplorerUrls?: ["BLOCKCHAIN_EXPLORER"]
         }
     }

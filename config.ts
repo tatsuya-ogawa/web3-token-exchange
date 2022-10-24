@@ -17,6 +17,7 @@ export interface Node {
     accounts: Accounts
     customChain: CustomChain
     endpoint: string
+    frontEndpoint: string
 }
 
 export const Node1: Node = {
@@ -33,7 +34,8 @@ export const Node1: Node = {
     customChain: {
         name: "custom-network1", chainId: 12345, networkId: 12345
     },
-    endpoint: "http://localhost:8545"
+    frontEndpoint: "http://localhost:8545",
+    endpoint: process.env["NODE1_ENDPOINT"] || "http://localhost:8545"
 };
 export const Node2: Node = {
     name: "node2",
@@ -49,7 +51,8 @@ export const Node2: Node = {
     customChain: {
         name: "custom-network2", chainId: 54321, networkId: 54321
     },
-    endpoint: "http://localhost:18545"
+    frontEndpoint: "http://localhost:18545",
+    endpoint: process.env["NODE2_ENDPOINT"] || "http://localhost:18545"
 };
 export const NodeList = [
     Node1,
