@@ -2,14 +2,14 @@ import express from 'express'
 import Nodes, {Node, Node1, Node2, NodeList} from "../../config";
 import {ethers} from "ethers";
 import morgan from "morgan";
-import {ExchangeManager} from "./contract";
+import {ExchangeManager, NodeManager} from "./contract";
 import ExchangeableTokenSol from '../../hardhat/artifacts/contracts/ExchangeableToken.sol/ExchangeableToken.json'
-const contractAddresses = {} as { [key: string]: string }
+const contractAddresses = {} as { [key: string]: NodeManager }
 (async () => {
     const exchangeManager = new ExchangeManager();
     await exchangeManager.deploy();
-    contractAddresses[exchangeManager.node1.getChainId()] = exchangeManager.node1.addressOfContract!;
-    contractAddresses[exchangeManager.node2.getChainId()] = exchangeManager.node2.addressOfContract!;
+    contractAddresses[exchangeManager.node1.getChainId()] = exchangeManager.node1;
+    contractAddresses[exchangeManager.node2.getChainId()] = exchangeManager.node2;
     await exchangeManager.start();
 })();
 
@@ -59,7 +59,7 @@ app.post('/faucet', async (req: express.Request, res: express.Response) => {
 })
 app.get('/contract/:chainId', async (req: express.Request, res: express.Response) => {
     const chainId = req.params.chainId;
-    const address = contractAddresses[chainId];
+    const address = contractAddresses[chainId].addressOfContract;
     const abi = ExchangeableTokenSol.abi
     res.send(JSON.stringify({address,abi}));
 })
@@ -71,9 +71,9 @@ app.get('/networks', async (req: express.Request, res: express.Response) => {
             nativeCurrency: {
                 name: `exchange${index+1}`,
                 symbol: `EX${index+1}`,
-                decimals: 10 //In number form
+                decimals: 18 //In number form
             },
-            rpcUrls: [node.endpoint],
+            rpcUrls: [node.frontEndpoint],
             // blockExplorerUrls?: ["BLOCKCHAIN_EXPLORER"]
         }
     }

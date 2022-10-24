@@ -9,6 +9,8 @@ const config: HardhatUserConfig = {
         privateKey: node.accounts.coinbase.privateKey,
         balance: "500000000000000000000"
       }],
+      // gasPrice: 20000000000,
+      // gas: 6000000,
       coinbase: node.accounts.coinbase.address,
       chainId: node.customChain.chainId,
       mining: {

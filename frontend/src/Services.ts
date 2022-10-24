@@ -9,11 +9,6 @@ export interface ExchangeNetwork {
 }
 export class ExchangeService {
     constructor() {
-        //name: string, endpoint: string, chainId: number
-        // const provider = new ethers.providers.JsonRpcProvider(endpoint, {
-        //     name: name,
-        //     chainId: chainId
-        // });
     }
     async getContract(chainId:string,signer:ethers.Signer):Promise<ExchangeableToken>{
         const response =await fetch(`http://localhost:4000/contract/${chainId}`);

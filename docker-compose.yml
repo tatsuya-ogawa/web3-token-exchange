@@ -11,6 +11,12 @@ services:
       - NODE=Node1
     ports:
       - 8545:8545
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8545" ]
+      interval: "3s"
+      timeout: "3s"
+      retries: 10
+      start_period: "0s"
   node2:
     working_dir: /opt/hardhat/node
     volumes:
@@ -22,3 +28,21 @@ services:
       - NODE=Node2    
     ports:
       - 18545:8545
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8545" ]
+      interval: "3s"
+      timeout: "3s"
+      retries: 10
+      start_period: "0s"
+  app:
+    build: .
+    ports:
+      - 4000:4000
+    environment:
+      - NODE1_ENDPOINT=http://node1:8545
+      - NODE2_ENDPOINT=http://node2:8545
+    depends_on:
+      node1:
+        condition: service_healthy
+      node2:
+        condition: service_healthy

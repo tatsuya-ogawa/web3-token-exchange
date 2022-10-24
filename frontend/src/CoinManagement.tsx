@@ -11,7 +11,7 @@ import {
     CircularProgress,
     MenuItem,
     Select,
-    SelectChangeEvent,
+    SelectChangeEvent, TextField,
     Toolbar, Typography
 } from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -45,24 +45,41 @@ const switchEthereumChain = async (network: ExchangeNetwork): Promise<void> => {
         }
     }
 }
-
+const gasLimit = 8000000;
 function ExchangeNetworkView(props: { network: ExchangeNetwork }) {
     const [address, setAddress] = useState<string | null>(null);
     const [balance, setBalance] = useState<string | null>(null);
-    const updateBalance = async(address:string)=>{
+    const [exchangeBalance, setExchangeBalance] = useState<string>("");
+    const [amount, setAmount] = useState<string>("100000000");
+
+    const exchange = async () => {
+        const service = new ExchangeService();
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const contract = await service.getContract(props.network.chainId, provider.getSigner());
+        const value = BigNumber.from(amount);
+        await contract.exchange(address!, value, {value: value.add(gasLimit)});
+    }
+    const withdraw = async () => {
+        const service = new ExchangeService();
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const contract = await service.getContract(props.network.chainId, provider.getSigner());
+        await contract.withdraw({gasLimit: gasLimit});
+    }
+    const refresh = async () => {
+        if (!address) return;
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const balance = await provider.getBalance(address);
         setBalance(balance.toString());
+        // const service = new ExchangeService();
+        // const contract = await service.getContract(props.network.chainId, provider.getSigner());
+        // const exchangeBalance = await contract.balanceOf(address);
+        // setExchangeBalance(exchangeBalance.toString());
     }
-
-    const exchange = async (toAddress:string,amount:string)=>{
-        const service = new ExchangeService();
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const contract = await service.getContract(props.network.chainId,provider.getSigner());
-        // await contract.exchangeAll(address!,{value:"0x"+amount.toString(16)});
-        const value = BigNumber.from(amount);
-        await contract.exchange(toAddress,value,{value:value.mul(2)});
-    }
+    useEffect(() => {
+        (async () => {
+            await refresh();
+        })();
+    }, [address]);
     useEffect(() => {
         let ignore = false;
         if (ignore) return;
@@ -75,7 +92,7 @@ function ExchangeNetworkView(props: { network: ExchangeNetwork }) {
             const accounts = await requestAccounts();
             if (accounts.length > 0) {
                 setAddress(accounts[0]);
-                await updateBalance(accounts[0]);
+                await refresh();
             }
         })();
         return () => {
@@ -86,25 +103,35 @@ function ExchangeNetworkView(props: { network: ExchangeNetwork }) {
         return (<div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "100%"}}>
             <Card variant="outlined">
                 <CardContent>
-                    <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                    <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
                         {props.network.chainName}'s balance
                     </Typography>
                     <Typography variant="h5" component="div">
-                        <a>{balance} {props.network.nativeCurrency.symbol} </a> <RefreshIcon onClick={()=>{updateBalance(address)}}></RefreshIcon>
+                        <a>Coin: {balance} {props.network.nativeCurrency.symbol} </a>
                     </Typography>
+                    {/*<Typography variant="h6" component="div">*/}
+                    {/*    <a>Exchange: {exchangeBalance} {props.network.nativeCurrency.symbol}</a>*/}
+                    {/*    /!*<RefreshIcon onClick={()=>{updateBalance(address)}}></RefreshIcon>*!/*/}
+                    {/*</Typography>*/}
+                    <TextField id="amount" label="Amount" variant="standard" value={amount} onChange={(event) => {
+                        setAmount(event.target.value);
+                    }}/>
 
                 </CardContent>
                 <CardActions>
                     <Button onClick={async () => {
+                        await refresh();
+                    }}>Refresh</Button>
+                    <Button onClick={async () => {
                         const service = new ExchangeService();
-                        await service.faucet(address,props.network.chainId);
+                        await service.faucet(address, props.network.chainId);
                     }}>Faucet</Button>
                     <Button onClick={async () => {
-                        await exchange(address,"0x800000000000000");
+                        await exchange();
                     }}>Exchange</Button>
                     <Button onClick={async () => {
-
-                    }}>Redraw</Button>
+                        await withdraw();
+                    }}>Withdraw</Button>
                 </CardActions>
             </Card>
         </div>);
@@ -130,6 +157,8 @@ function CoinManagement() {
         setSelectedNetwork(network);
         if (network) {
             window.localStorage.setItem("chainId", network.chainId);
+        } else {
+            window.localStorage.removeItem("chainId");
         }
     };
     const service = new ExchangeService();
