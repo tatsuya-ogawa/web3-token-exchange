@@ -1,6 +1,6 @@
-import { ExchangeableToken } from "../hardhat/typechain-types";
-import ExchangeableTokenSol from '../hardhat/artifacts/contracts/ExchangeableToken.sol/ExchangeableToken.json'
-import { Node1 } from "../config";
+import { ExchangeableToken } from "../../hardhat/typechain-types";
+import ExchangeableTokenSol from '../../hardhat/artifacts/contracts/ExchangeableToken.sol/ExchangeableToken.json'
+import { Node1 } from "../../config";
 import { ethers,ContractFactory } from "ethers";
 
 const endpoint = Node1.endpoint;

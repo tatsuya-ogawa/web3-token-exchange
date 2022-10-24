@@ -3,7 +3,10 @@ import "@nomicfoundation/hardhat-toolbox";
 import { Node1, Node2 } from "../config"
 const config: HardhatUserConfig = {
   solidity: "0.8.17",
-  networks: {    
+  networks: {
+    hardhat: {
+
+    },
     localmain: {
       url: Node1.endpoint,
       accounts: [Node1.accounts.deployer.privateKey],

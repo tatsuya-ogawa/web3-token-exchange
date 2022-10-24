@@ -3,6 +3,8 @@ pragma solidity ^0.8.4;
 import "./MyERC20.sol";
 
 contract ExchangeableToken is MyERC20 {
+    string public name = "My Exchange Token";
+    string public symbol = "EX";
     uint256 private _rate;
     uint256 private constant _base = 1;
 
@@ -14,12 +16,12 @@ contract ExchangeableToken is MyERC20 {
         return address(this);
     }
 
-    function estimateNumOfToken(uint256 amount) public view returns (uint256) {
-        return (amount * _rate / _base);
+    function estimateNumOfToken(uint256 amount) public pure returns (uint256) {
+        return amount;// (amount * _rate / _base);
     }
 
-    function estimateNativeCoin(uint256 amount) public view returns (uint256) {
-        return (amount * _base / _rate);
+    function estimateNativeCoin(uint256 amount) public pure returns (uint256) {
+        return amount;//(amount * _base / _rate);
     }
 
     event ExchangeTransfer(
@@ -28,14 +30,16 @@ contract ExchangeableToken is MyERC20 {
         uint256 _value
     );
 
-    function mint(uint256 amount) public payable returns (bool success) {        
+    function mint(uint256 amount) public payable returns (bool success) {
         require(amount > 0,"The amount must be greater than 0");
         uint256 num_of_tokens = estimateNumOfToken(amount);
         uint256 cost = estimateNativeCoin(num_of_tokens);
         require(num_of_tokens > 0,"Number of tokens must be greater than 0");        
         _mint(msg.sender, num_of_tokens);
-        if(msg.value - cost > 0){
-            payable(msg.sender).transfer(msg.value - cost);
+        unchecked{
+            if(msg.value - cost > 0){
+                payable(msg.sender).transfer(msg.value - cost);
+            }
         }
         return true;
     }
@@ -46,8 +50,10 @@ contract ExchangeableToken is MyERC20 {
 
     function exchange(address to, uint256 amount)
         public
+        payable
         returns (bool success)
     {
+        mint(amount);
         _burn(msg.sender, amount);
         emit ExchangeTransfer(msg.sender, to, amount);
         return true;
@@ -59,8 +65,8 @@ contract ExchangeableToken is MyERC20 {
         payable(msg.sender).transfer(value);
     }
 
-    function deposit(address user, uint256 amount) external {
+    function deposit(address to, uint256 amount) external {
         require(msg.sender == _contractOwner);
-        _mint(user, amount);
+        _mint(to, amount);
     }
 }

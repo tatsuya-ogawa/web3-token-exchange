@@ -13,7 +13,7 @@ describe("ERC20-BEP20 token", function () {
     const Token = await ethers.getContractFactory("ExchangeableToken");
     token = await Token.deploy();
     await token.deployed();
-    await token.mint(1000000);
+    await token.mint(totalSupply,{value:totalSupply});
   });
   describe("common", function () {
     it("total supply should return righr value", async function () {

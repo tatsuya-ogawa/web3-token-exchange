@@ -12,8 +12,8 @@ const config: HardhatUserConfig = {
       coinbase: node.accounts.coinbase.address,
       chainId: node.customChain.chainId,
       mining: {
-        auto: true,
-        // interval: [1000, 2000]
+        auto: false,
+        interval: [500, 1000]
       }
     },
   }

@@ -3,7 +3,7 @@ import { Common } from '@ethereumjs/common'
 import { Transaction, TxData, TxOptions } from '@ethereumjs/tx';
 import Web3 from 'web3';
 import Wallet from 'ethereumjs-wallet';
-import { Node, Node1, Node2 } from '../config';
+import { Node, Node1, Node2 } from '../../config';
 import request from 'request'
 const getWallet = (privateKey: string): Wallet => {
     const wallet = Wallet.fromPrivateKey(Buffer.from(privateKey, 'hex'));

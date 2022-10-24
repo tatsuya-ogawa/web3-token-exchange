@@ -47,10 +47,14 @@ export const Node2: Node = {
         }
     },
     customChain: {
-        name: "custom-network1", chainId: 54321, networkId: 54321
+        name: "custom-network2", chainId: 54321, networkId: 54321
     },
     endpoint: "http://localhost:18545"
 };
+export const NodeList = [
+    Node1,
+    Node2
+]
 export default {
     Node1,
     Node2
