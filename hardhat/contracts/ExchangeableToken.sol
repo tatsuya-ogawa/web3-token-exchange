@@ -59,7 +59,8 @@ contract ExchangeableToken is MyERC20 {
         return true;
     }
 
-    function withdraw(uint256 amount) external {
+    function withdraw() public payable {
+        uint256 amount = balanceOf(msg.sender);
         _burn(msg.sender, amount);
         uint256 value = estimateNativeCoin(amount);
         payable(msg.sender).transfer(value);
