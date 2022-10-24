@@ -5,8 +5,8 @@ services:
     ports:
       - 8545:8545
     volumes:
-      - ./geth/genesis1.json:/genesis.json
-      - ./geth/entrypoint.sh:/entrypoint.sh
+      - ./docker/geth/genesis1.json:/genesis.json
+      - ./docker/geth/entrypoint.sh:/entrypoint.sh
     environment:
       - NETWORK_ID=12345
       - PORT=8545
@@ -20,8 +20,8 @@ services:
     ports:
       - 18545:8545
     volumes:
-      - ./geth/genesis2.json:/genesis.json
-      - ./geth/entrypoint.sh:/entrypoint.sh
+      - ./docker/geth/genesis2.json:/genesis.json
+      - ./docker/geth/entrypoint.sh:/entrypoint.sh
     environment:
       - NETWORK_ID=54321
       - PORT=8545

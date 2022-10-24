@@ -3,10 +3,10 @@ services:
   node1:
     working_dir: /opt/hardhat/node
     volumes:
-      - ./node/hardhat.config.ts:/opt/hardhat/node/hardhat.config.ts
+      - ./docker/node/hardhat.config.ts:/opt/hardhat/node/hardhat.config.ts
       - ./config.ts:/opt/hardhat/config.ts
     build: 
-      context: node
+      context: ./docker/node
     environment:
       - NODE=Node1
     ports:
@@ -14,10 +14,10 @@ services:
   node2:
     working_dir: /opt/hardhat/node
     volumes:
-      - ./node/hardhat.config.ts:/opt/hardhat/node/hardhat.config.ts
+      - ./docker/node/hardhat.config.ts:/opt/hardhat/node/hardhat.config.ts
       - ./config.ts:/opt/hardhat/config.ts
     build: 
-      context: node
+      context: ./docker/node
     environment:
       - NODE=Node2    
     ports:
