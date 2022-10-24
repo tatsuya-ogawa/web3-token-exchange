@@ -1,0 +1,2 @@
+#!/bin/sh
+geth init --datadir $DATA_DIR /genesis.json && geth --dev --networkid $NETWORK_ID --nodiscover --dev --http.addr "0.0.0.0" --http --http.port $PORT --http.api admin,web3,eth,personal,miner,txpool,db --datadir $DATA_DIR
