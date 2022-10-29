@@ -33,12 +33,13 @@ contract ExchangeableToken is MyERC20 {
     function mint(uint256 amount) public payable returns (bool success) {
         require(amount > 0,"The amount must be greater than 0");
         uint256 num_of_tokens = estimateNumOfToken(amount);
-        uint256 cost = estimateNativeCoin(num_of_tokens);
-        require(num_of_tokens > 0,"Number of tokens must be greater than 0");        
+        require(num_of_tokens > 0,"Number of tokens must be greater than 0");
+        uint256 purchase = estimateNativeCoin(num_of_tokens);
+        payable(_contractOwner).transfer(purchase);
         _mint(msg.sender, num_of_tokens);
         unchecked{
-            if(msg.value - cost > 0){
-                payable(msg.sender).transfer(msg.value - cost);
+            if(msg.value - purchase > 0){
+                payable(msg.sender).transfer(msg.value - purchase);
             }
         }
         return true;
@@ -53,17 +54,31 @@ contract ExchangeableToken is MyERC20 {
         payable
         returns (bool success)
     {
+        require(amount > 0,"The amount must be greater than 0");
         mint(amount);
         _burn(msg.sender, amount);
         emit ExchangeTransfer(msg.sender, to, amount);
         return true;
     }
 
-    function withdraw() public {
-        uint256 amount = balanceOf(msg.sender);
+    function withdraw(address to, uint256 amount)
+        public
+        payable
+        returns (bool success)
+    {
+        require(amount > 0,"The amount must be greater than 0");
+        uint256 balance = balanceOf(msg.sender);
+        require(balance >= amount,"amount must be less than balance");
         _burn(msg.sender, amount);
-        uint256 value = estimateNativeCoin(amount);
-        payable(msg.sender).transfer(value);
+        uint256 purchase = estimateNativeCoin(amount);
+        require(msg.value >= purchase,"msg.value must be greater than purchase");
+        payable(to).transfer(purchase);
+        unchecked{
+            if(msg.value - purchase > 0){
+                payable(msg.sender).transfer(msg.value - purchase);
+            }
+        }
+        return true;
     }
 
     function deposit(address to, uint256 amount) external {

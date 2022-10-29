@@ -2,7 +2,7 @@ import {ExchangeableToken} from "../../hardhat/typechain-types";
 import ExchangeableTokenSol from '../../hardhat/artifacts/contracts/ExchangeableToken.sol/ExchangeableToken.json'
 import {Node, Node1, Node2} from "../../config";
 import {ethers, ContractFactory, BigNumber} from "ethers";
-
+const gasLimit = 8000000;
 export class NodeManager {
     private wallet: ethers.Wallet;
     public addressOfContract?: string;
@@ -42,17 +42,21 @@ export class NodeManager {
         this.addressOfContract = contract.address;
         return this.addressOfContract;
     }
-    async faucetToContract(){
-        if(!this.addressOfContract)return
-        console.log(`faucet to ${this.addressOfContract}`);
+    async faucet(address:string){
+        console.log(`faucet to ${address}`);
         const tx = {
-            to: this.addressOfContract!,
+            to: address,
             // Convert currency unit from ether to wei
             value: ethers.utils.parseEther("1")
         }
         await this.wallet.sendTransaction(tx);
-        const balance = await this.wallet.provider.getBalance(this.addressOfContract);
-        console.log(`balance of ${this.addressOfContract} is ${balance}`);
+        const balance = await this.wallet.provider.getBalance(address);
+        console.log(`balance of ${address} is ${balance}`);
+    }
+
+    async withdraw(to: string, amount: BigNumber) {
+        const exchangeableTokenContract: ExchangeableToken = new ethers.Contract(this.addressOfContract!, ExchangeableTokenSol.abi, this.wallet) as any;
+        await exchangeableTokenContract.withdraw(to, amount,{value:amount.add(gasLimit)});
     }
 }
 
@@ -91,8 +95,12 @@ export class ExchangeManager {
         })
         while(true){
             try {
-                await this.node1.faucetToContract();
-                await this.node2.faucetToContract();
+                if(this.node1.addressOfContract) {
+                    await this.node1.faucet(this.node1.addressOfContract);
+                }
+                if(this.node2.addressOfContract) {
+                    await this.node2.faucet(this.node2.addressOfContract);
+                }
             }catch (ex){
                 console.log(ex);
             }

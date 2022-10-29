@@ -14,8 +14,6 @@ import {
     SelectChangeEvent, TextField,
     Toolbar, Typography
 } from "@mui/material";
-import RefreshIcon from '@mui/icons-material/Refresh';
-import {BigNumberish} from "ethers/lib/ethers";
 
 declare global {
     interface Window {
@@ -49,7 +47,6 @@ const gasLimit = 8000000;
 function ExchangeNetworkView(props: { network: ExchangeNetwork }) {
     const [address, setAddress] = useState<string | null>(null);
     const [balance, setBalance] = useState<string | null>(null);
-    const [exchangeBalance, setExchangeBalance] = useState<string>("");
     const [amount, setAmount] = useState<string>("100000000");
 
     const exchange = async () => {
@@ -60,20 +57,16 @@ function ExchangeNetworkView(props: { network: ExchangeNetwork }) {
         await contract.exchange(address!, value, {value: value.add(gasLimit)});
     }
     const withdraw = async () => {
+        if (!address) return;
         const service = new ExchangeService();
         const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const contract = await service.getContract(props.network.chainId, provider.getSigner());
-        await contract.withdraw({gasLimit: gasLimit});
+        await service.withdraw(amount,props.network.chainId,provider.getSigner());
     }
     const refresh = async () => {
         if (!address) return;
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const balance = await provider.getBalance(address);
         setBalance(balance.toString());
-        // const service = new ExchangeService();
-        // const contract = await service.getContract(props.network.chainId, provider.getSigner());
-        // const exchangeBalance = await contract.balanceOf(address);
-        // setExchangeBalance(exchangeBalance.toString());
     }
     useEffect(() => {
         (async () => {
@@ -104,16 +97,15 @@ function ExchangeNetworkView(props: { network: ExchangeNetwork }) {
             <Card variant="outlined">
                 <CardContent>
                     <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
-                        {props.network.chainName}'s balance
+                        {props.network.chainName}
+                    </Typography>
+                    <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
+                        <a>Address:{address}</a>
                     </Typography>
                     <Typography variant="h5" component="div">
-                        <a>Coin: {balance} {props.network.nativeCurrency.symbol} </a>
+                        <a>Balance:{balance} {props.network.nativeCurrency.symbol} </a>
                     </Typography>
-                    {/*<Typography variant="h6" component="div">*/}
-                    {/*    <a>Exchange: {exchangeBalance} {props.network.nativeCurrency.symbol}</a>*/}
-                    {/*    /!*<RefreshIcon onClick={()=>{updateBalance(address)}}></RefreshIcon>*!/*/}
-                    {/*</Typography>*/}
-                    <TextField id="amount" label="Amount" variant="standard" value={amount} onChange={(event) => {
+                    <TextField type={"number"}  id="amount" label="Amount" variant="standard" value={amount} onChange={(event) => {
                         setAmount(event.target.value);
                     }}/>
 
